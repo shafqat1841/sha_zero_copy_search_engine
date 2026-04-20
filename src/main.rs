@@ -1,5 +1,7 @@
 use zero_copy_search_engine::run;
 
 fn main() {
-    run();
+    if let Err(err) = run() {
+        println!("file: main.rs ~ line 5 ~ ifletErr ~ err : {:?} ", err);
+    };
 }
