@@ -8,10 +8,11 @@ use memmap2::Mmap;
 use crate::{errors::RunErr, file_mmap::FileMmap, log_searcher::LogSearcher};
 
 pub fn run() -> Result<(), RunErr> {
+    let path: &str = "./log_files/access.log";
     let query = "uplherc.upl.com";
     let limit: usize = 1000;
 
-    let file_buffer: FileMmap = FileMmap::new()?;
+    let file_buffer: FileMmap = FileMmap::new(path)?;
 
     let bytes: &Mmap = file_buffer.get_bytes();
 

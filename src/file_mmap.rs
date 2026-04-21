@@ -10,8 +10,8 @@ pub struct FileMmap {
 }
 
 impl FileMmap {
-    pub fn new() -> Result<Self, RunErr> {
-        let file = File::open("./log_files/access.log")?;
+    pub fn new(path: &str) -> Result<Self, RunErr> {
+        let file = File::open(path)?;
 
         let mmap: Mmap = unsafe { Mmap::map(&file)? };
 
