@@ -1,10 +1,11 @@
 mod errors;
+mod file_mmap;
 
-use std::{fs::File, str::from_utf8};
+use std::{str::from_utf8};
 
 use memmap2::Mmap;
 
-use crate::errors::RunErr;
+use crate::{errors::RunErr, file_mmap::FileMmap};
 
 #[derive(Debug)]
 struct SearchResult<'a> {
@@ -15,11 +16,9 @@ struct SearchResult<'a> {
 pub fn run() -> Result<(), RunErr> {
     let address_to_find = "uplherc.upl.com";
 
-    let file = File::open("./log_files/access.log")?;
+    let file_buffer: FileMmap = FileMmap::new()?;
 
-    let mmap = unsafe { Mmap::map(&file)? };
-
-    let bytes: &[u8] = &mmap;
+    let bytes: &Mmap = file_buffer.get_bytes();
 
     let bytes_split = bytes.split(|b| *b == b'\n');
 
@@ -29,7 +28,7 @@ pub fn run() -> Result<(), RunErr> {
         let start_idx = line_str.find(address_to_find)?;
 
         let end_idx = start_idx + address_to_find.len();
-        let ip_address = &line_str[start_idx..end_idx];
+        let ip_address = line_str.get(start_idx..end_idx)?;
 
         Some(SearchResult {
             line: line_str,
