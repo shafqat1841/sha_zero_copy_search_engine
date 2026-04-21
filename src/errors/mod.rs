@@ -4,6 +4,8 @@ use std::str::Utf8Error;
 pub enum RunErr {
     IOError(String),
     Utf8Error(String),
+    EmptyQueryErr(String),
+    EmptyPathErr(String),
 }
 
 impl From<std::io::Error> for RunErr {

@@ -16,10 +16,11 @@ impl<'a> LogSearcher<'a> {
     pub fn get_search_result(&self, line_bytes: &'a [u8], query: &str) -> Option<SearchResult<'a>> {
         let line_str = from_utf8(line_bytes).ok()?;
 
-        let start_idx = line_str.find(query)?;
+        line_str.find(query)?;
 
-        let end_idx = start_idx + query.len();
-        let ip_address = line_str.get(start_idx..end_idx)?;
+        let end_idx = line_str.find(" - - ")?;
+
+        let ip_address = line_str.get(..end_idx)?;
 
         Some(SearchResult {
             line: line_str,
