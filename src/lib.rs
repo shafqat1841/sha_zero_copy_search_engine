@@ -21,32 +21,27 @@ pub fn run() -> Result<(), RunErr> {
 
     let bytes: &[u8] = &mmap;
 
-    let mut result: Vec<SearchResult> = Vec::new();
+    let bytes_split = bytes.split(|b| *b == b'\n');
 
-    for (index, line_bytes) in bytes.split(|b| *b == b'\n').enumerate() {
-        let line_number = index + 1;
+    let filter_map_fun = |line_bytes| {
+        let line_str = from_utf8(line_bytes).ok()?;
+
+        let start_idx = line_str.find(address_to_find)?;
+
+        let end_idx = start_idx + address_to_find.len();
+        let ip_address = &line_str[start_idx..end_idx];
+
+        Some(SearchResult {
+            line: line_str,
+            ip_address,
+        })
+    };
+
+    let result: Vec<SearchResult> = bytes_split
         // for development we are just checking 1000 lines only
-        if line_number >= 1000 {
-            break;
-        }
-        match from_utf8(line_bytes) {
-            Err(err) => {
-                println!("Line {}, error: {}", line_number, err);
-                continue;
-            }
-            Ok(line_str) => {
-                if let Some(index) = line_str.find(address_to_find) {
-                    let ip_address = &line_str[index..address_to_find.len()];
-                    let search_result = SearchResult {
-                        line: line_str,
-                        ip_address,
-                    };
-
-                    result.push(search_result);
-                }
-            }
-        }
-    }
+        .take(1000)
+        .filter_map(filter_map_fun)
+        .collect();
 
     for search_result in result {
         println!("ip_address : {:?} ", search_result.ip_address);
