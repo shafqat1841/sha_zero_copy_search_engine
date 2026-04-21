@@ -35,20 +35,14 @@ pub fn run() -> Result<(), RunErr> {
                 continue;
             }
             Ok(line_str) => {
-                let byte_index_option = line_str.find(" - - ");
-                match byte_index_option {
-                    None => {
-                        continue;
-                    }
-                    Some(byte_index) => {
-                        let ip_address = &line_str[..byte_index];
-                        let search_result = SearchResult {
-                            line: line_str,
-                            ip_address,
-                        };
+                if let Some(index) = line_str.find(address_to_find) {
+                    let ip_address = &line_str[index..address_to_find.len()];
+                    let search_result = SearchResult {
+                        line: line_str,
+                        ip_address,
+                    };
 
-                        result.push(search_result);
-                    }
+                    result.push(search_result);
                 }
             }
         }
