@@ -1,7 +1,9 @@
+use std::path::PathBuf;
+
 use crate::errors::RunErr;
 
 pub struct UserArgs {
-    pub path: String,
+    pub path: PathBuf,
     pub query: String,
     pub limit: usize,
 }
@@ -43,12 +45,14 @@ impl UserArgs {
         };
 
         // let path: &str = "./log_files/access.log";
-        let path = path_val;
+        let path: PathBuf = PathBuf::from(path_val);
 
-        Ok(Self {
-            path,
-            query,
-            limit,
-        })
+        if !path.exists() {
+            return Err(RunErr::WrongPathErr(
+                "Error: Path does not exists".to_string(),
+            ));
+        }
+
+        Ok(Self { path, query, limit })
     }
 }

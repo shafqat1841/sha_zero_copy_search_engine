@@ -6,6 +6,7 @@ pub enum RunErr {
     Utf8Error(String),
     EmptyQueryErr(String),
     EmptyPathErr(String),
+    WrongPathErr(String),
 }
 
 impl From<std::io::Error> for RunErr {

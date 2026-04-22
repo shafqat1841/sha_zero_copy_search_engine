@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::{fs::File, path::PathBuf};
 
 use memmap2::Mmap;
 
@@ -10,7 +10,7 @@ pub struct FileMmap {
 }
 
 impl FileMmap {
-    pub fn new(path: &str) -> Result<Self, RunErr> {
+    pub fn new(path: &PathBuf) -> Result<Self, RunErr> {
         let file = File::open(path)?;
 
         let mmap: Mmap = unsafe { Mmap::map(&file)? };
@@ -20,7 +20,7 @@ impl FileMmap {
         Ok(res)
     }
 
-    pub fn get_bytes(&self) -> &Mmap {
+    pub fn get_bytes(&self) -> &[u8] {
         &self.mmap
     }
 }

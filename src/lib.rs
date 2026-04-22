@@ -4,8 +4,6 @@ mod log_searcher;
 mod search_result;
 mod user_args;
 
-use memmap2::Mmap;
-
 use crate::{errors::RunErr, file_mmap::FileMmap, log_searcher::LogSearcher, user_args::UserArgs};
 
 pub fn run() -> Result<(), RunErr> {
@@ -13,7 +11,7 @@ pub fn run() -> Result<(), RunErr> {
 
     let file_buffer: FileMmap = FileMmap::new(&user_args.path)?;
 
-    let bytes: &Mmap = file_buffer.get_bytes();
+    let bytes: &[u8] = file_buffer.get_bytes();
 
     let log_searcher: LogSearcher = LogSearcher::new(bytes);
 
